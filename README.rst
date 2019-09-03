@@ -18,8 +18,10 @@ hvplot panel
 
 Create Panel class for hvplot  high-level plotting 
 Exemple :
-![Alt Text](docs/hvplot_demo.gif)
 
+.. image:: docs/hvplot_demo.gif
+  :width: 400
+  :alt: Hvplot_panel demo
 
 * Free software: MIT license
 * Documentation: https://hvplot-panel.readthedocs.io.
