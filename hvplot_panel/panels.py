@@ -10,7 +10,7 @@ import param
 import holoviews as hv
 # import requests
 # import dateutil.parser
-import inspect
+# import inspect
 from datashader.colors import Sets1to3
 from holoviews.operation.datashader import datashade
 import datashader as ds
