@@ -23,7 +23,6 @@ Exemple :
   :width: 400
     :alt: Hvplot_panel demo
 
-
 * Free software: MIT license
 * Documentation: https://hvplot-panel.readthedocs.io.
 
