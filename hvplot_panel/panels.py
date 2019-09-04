@@ -260,3 +260,534 @@ class BoxPanel(param.Parameterized):
         def panel(self):
             return pn.Row(self.param, self.view)
 
+# %load ../hvplot_panel/scatter_panel.py
+class ScatterPanel(param.Parameterized):
+
+        x = param.ObjectSelector(default="yellow", objects=["red","yellow","green"])
+        y = param.ListSelector(default=["yellow"], objects=["red","yellow","green"])
+
+        #######################
+        # Optional parameters #
+        #######################
+        options_axis = param.Parameter(precedence=3)
+
+        def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+            if "options" not in params:
+                params["options_axis"] = AxisOptionsPanel(name="Options")
+            if dataframe is not None:
+                self.dataframe = dataframe
+            else:
+                self.dataframe = df
+            for k, v in objects.items():
+                try:
+                    self.param[k].objects = v
+                except:
+                    pass
+            for k, v in defaults.items():
+                try:
+                    setattr(self, k, v)
+                except:
+                    pass
+            super(ScatterPanel, self).__init__(**params)
+
+            self.set_options()
+
+        def set_options(self):
+            self.plot_options = {
+                'x' : self.x,
+                'y' : self.y,
+        #######################
+        # Generic opts param. #
+        #######################
+                 'width'                  : self.options_axis.width,
+                 'height'                 : self.options_axis.height,
+                 'shared_axes'            : self.options_axis.shared_axes,
+                 'grid'                   : self.options_axis.grid,
+                 'legend'                 : self.options_axis.legend,
+                 'rot'                    : self.options_axis.rot,
+                # 'xlim'                   : self.options_axis.xlim,
+                # 'ylim'                   : self.options_axis.ylim,
+                # 'xticks'                 : self.options_axis.xticks,
+                # 'yticks'                 : self.options_axis.yticks,
+                 'colorbar'               : self.options_axis.colorbar,
+                 'invert'                 : self.options_axis.invert,
+                 'title'                  : self.options_axis.title,
+                 'logx'                   : self.options_axis.logx,
+                 'logy'                   : self.options_axis.logy,
+                 'loglog'                 : self.options_axis.loglog,
+                 'xaxis'                  : self.options_axis.xaxis,
+                 'yaxis'                  : self.options_axis.yaxis,
+                # 'xformatter'             : self.options_axis.xformatter,
+                # 'yformatter'             : self.options_axis.yformatter,
+                 'xlabel'                 : self.options_axis.xlabel,
+                 'ylabel'                 : self.options_axis.ylabel,
+                # 'padding'                : self.options_axis.padding,
+            }
+
+        @param.depends(
+               'x',
+               'y',
+               'options_axis.width',
+               'options_axis.height',
+               'options_axis.shared_axes',
+               'options_axis.grid',
+               'options_axis.legend',
+               'options_axis.rot',
+#               'options_axis.xlim',
+#               'options_axis.ylim',
+#               'options_axis.xticks',
+#               'options_axis.yticks',
+               'options_axis.colorbar',
+               'options_axis.invert',
+               'options_axis.title',
+               'options_axis.logx',
+               'options_axis.logy',
+               'options_axis.loglog',
+               'options_axis.xaxis',
+               'options_axis.yaxis',
+#               'options_axis.xformatter',
+#               'options_axis.yformatter',
+               'options_axis.xlabel',
+               'options_axis.ylabel',
+#               'options_axis.padding',
+             watch=True)
+        def view(self):
+            self.set_options()
+            return self.dataframe.hvplot.scatter(**self.plot_options)
+
+        def panel(self):
+            return pn.Row(self.param, self.view)
+
+
+class HistPanel(param.Parameterized):
+
+        y  = param.ListSelector(default=["yellow"], objects=["red","yellow","green"])
+        by = param.ObjectSelector(default="yellow", objects=["red","yellow","green"])
+
+        #######################
+        # Optional parameters #
+        #######################
+        options_axis = param.Parameter(precedence=3)
+
+        def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+            if "options" not in params:
+                params["options_axis"] = AxisOptionsPanel(name="Options")
+            if dataframe is not None:
+                self.dataframe = dataframe
+            else:
+                self.dataframe = df
+            for k, v in objects.items():
+                try:
+                    self.param[k].objects = v
+                except:
+                    pass
+            for k, v in defaults.items():
+                try:
+                    setattr(self, k, v)
+                except:
+                    pass
+            super(HistPanel, self).__init__(**params)
+
+            self.set_options()
+
+        def set_options(self):
+            self.plot_options = {
+                'y' : self.y,
+                'by' : self.by,
+        #######################
+        # Generic opts param. #
+        #######################
+                'width'                  : self.options_axis.width,
+                 'height'                 : self.options_axis.height,
+                 'shared_axes'            : self.options_axis.shared_axes,
+                 'grid'                   : self.options_axis.grid,
+                 'legend'                 : self.options_axis.legend,
+                 'rot'                    : self.options_axis.rot,
+                # 'xlim'                   : self.options_axis.xlim,
+                # 'ylim'                   : self.options_axis.ylim,
+                # 'xticks'                 : self.options_axis.xticks,
+                # 'yticks'                 : self.options_axis.yticks,
+                 'colorbar'               : self.options_axis.colorbar,
+                 'invert'                 : self.options_axis.invert,
+                 'title'                  : self.options_axis.title,
+                 'logx'                   : self.options_axis.logx,
+                 'logy'                   : self.options_axis.logy,
+                 'loglog'                 : self.options_axis.loglog,
+                 'xaxis'                  : self.options_axis.xaxis,
+                 'yaxis'                  : self.options_axis.yaxis,
+                # 'xformatter'             : self.options_axis.xformatter,
+                # 'yformatter'             : self.options_axis.yformatter,
+                 'xlabel'                 : self.options_axis.xlabel,
+                 'ylabel'                 : self.options_axis.ylabel,
+                # 'padding'                : self.options_axis.padding,
+            }
+
+        @param.depends(
+               'y',
+               'by',
+               'options_axis.width',
+               'options_axis.height',
+               'options_axis.shared_axes',
+               'options_axis.grid',
+               'options_axis.legend',
+               'options_axis.rot',
+#               'options_axis.xlim',
+#               'options_axis.ylim',
+#               'options_axis.xticks',
+#               'options_axis.yticks',
+               'options_axis.colorbar',
+               'options_axis.invert',
+               'options_axis.title',
+               'options_axis.logx',
+               'options_axis.logy',
+               'options_axis.loglog',
+               'options_axis.xaxis',
+               'options_axis.yaxis',
+#               'options_axis.xformatter',
+#               'options_axis.yformatter',
+               'options_axis.xlabel',
+               'options_axis.ylabel',
+#               'options_axis.padding',
+             watch=True)
+        def view(self):
+            self.set_options()
+            return self.dataframe.hvplot.hist(**self.plot_options)
+
+        def panel(self):
+            return pn.Row(self.param, self.view)
+
+
+# %load ../hvplot_panel/bar_panel.py
+class BarPanel(param.Parameterized):
+
+        x = param.ObjectSelector(default="yellow", objects=["red","yellow","green"])
+        y = param.ListSelector(default=["yellow"], objects=["red","yellow","green"])
+        stacked = param.Boolean(default=False)
+
+        #######################
+        # Optional parameters #
+        #######################
+        options_axis = param.Parameter(precedence=3)
+
+        def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+            if "options" not in params:
+                params["options_axis"] = AxisOptionsPanel(name="Options")
+            if dataframe is not None:
+                self.dataframe = dataframe
+            else:
+                self.dataframe = df
+            for k, v in objects.items():
+                try:
+                    self.param[k].objects = v
+                except:
+                    pass
+            for k, v in defaults.items():
+                try:
+                    setattr(self, k, v)
+                except:
+                    pass
+            super(BarPanel, self).__init__(**params)
+
+            self.set_options()
+
+        def set_options(self):
+            self.plot_options = {
+                'x' : self.x,
+                'y' : self.y,
+                'stacked' : self.stacked,
+        #######################
+        # Generic opts param. #
+        #######################
+                 'width'                  : self.options_axis.width,
+                 'height'                 : self.options_axis.height,
+                 'shared_axes'            : self.options_axis.shared_axes,
+                 'grid'                   : self.options_axis.grid,
+                 'legend'                 : self.options_axis.legend,
+                 'rot'                    : self.options_axis.rot,
+                # 'xlim'                   : self.options_axis.xlim,
+                # 'ylim'                   : self.options_axis.ylim,
+                # 'xticks'                 : self.options_axis.xticks,
+                # 'yticks'                 : self.options_axis.yticks,
+                 'colorbar'               : self.options_axis.colorbar,
+                 'invert'                 : self.options_axis.invert,
+                 'title'                  : self.options_axis.title,
+                 'logx'                   : self.options_axis.logx,
+                 'logy'                   : self.options_axis.logy,
+                 'loglog'                 : self.options_axis.loglog,
+                 'xaxis'                  : self.options_axis.xaxis,
+                 'yaxis'                  : self.options_axis.yaxis,
+                # 'xformatter'             : self.options_axis.xformatter,
+                # 'yformatter'             : self.options_axis.yformatter,
+                 'xlabel'                 : self.options_axis.xlabel,
+                 'ylabel'                 : self.options_axis.ylabel,
+                # 'padding'                : self.options_axis.padding,
+            }
+            if len(self.y) == 1:
+                self.plot_options['y'] = self.y[0]
+
+        @param.depends(
+               'x',
+               'y',
+               'stacked',
+               'options_axis.width',
+               'options_axis.height',
+               'options_axis.shared_axes',
+               'options_axis.grid',
+               'options_axis.legend',
+               'options_axis.rot',
+#               'options_axis.xlim',
+#               'options_axis.ylim',
+#               'options_axis.xticks',
+#               'options_axis.yticks',
+               'options_axis.colorbar',
+               'options_axis.invert',
+               'options_axis.title',
+               'options_axis.logx',
+               'options_axis.logy',
+               'options_axis.loglog',
+               'options_axis.xaxis',
+               'options_axis.yaxis',
+#               'options_axis.xformatter',
+#               'options_axis.yformatter',
+               'options_axis.xlabel',
+               'options_axis.ylabel',
+#               'options_axis.padding',
+             watch=True)
+        def view(self):
+            self.set_options()
+            return self.dataframe.hvplot.bar(**self.plot_options)
+
+        def panel(self):
+            return pn.Row(self.param, self.view)
+# %load ../hvplot_panel/area_panel.py
+class AreaPanel(param.Parameterized):
+
+        x       = param.ObjectSelector(default="yellow", objects=["red","yellow","green"])
+        y       = param.ListSelector(default=["yellow"], objects=["red","yellow","green"])
+        y2      = param.ObjectSelector(default="yellow", objects=["red","yellow","green"])
+        stacked = param.Boolean(default=False)
+
+        #######################
+        # Optional parameters #
+        #######################
+        options_axis = param.Parameter(precedence=3)
+
+        def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+            if "options" not in params:
+                params["options_axis"] = AxisOptionsPanel(name="Options")
+            if dataframe is not None:
+                self.dataframe = dataframe
+            else:
+                self.dataframe = df
+            for k, v in objects.items():
+                try:
+                    self.param[k].objects = v
+                except:
+                    pass
+            for k, v in defaults.items():
+                try:
+                    setattr(self, k, v)
+                except:
+                    pass
+            super(AreaPanel, self).__init__(**params)
+
+            self.set_options()
+
+        def set_options(self):
+            self.plot_options = {
+                'x'      : self.x,
+                'y'      : self.y,
+                'y2'     : self.y2,
+                'stacked' : self.stacked,
+        #######################
+        # Generic opts param. #
+        #######################
+                 'width'                  : self.options_axis.width,
+                 'height'                 : self.options_axis.height,
+                 'shared_axes'            : self.options_axis.shared_axes,
+                 'grid'                   : self.options_axis.grid,
+                 'legend'                 : self.options_axis.legend,
+                 'rot'                    : self.options_axis.rot,
+                # 'xlim'                   : self.options_axis.xlim,
+                # 'ylim'                   : self.options_axis.ylim,
+                # 'xticks'                 : self.options_axis.xticks,
+                # 'yticks'                 : self.options_axis.yticks,
+                 'colorbar'               : self.options_axis.colorbar,
+                 'invert'                 : self.options_axis.invert,
+                 'title'                  : self.options_axis.title,
+                 'logx'                   : self.options_axis.logx,
+                 'logy'                   : self.options_axis.logy,
+                 'loglog'                 : self.options_axis.loglog,
+                 'xaxis'                  : self.options_axis.xaxis,
+                 'yaxis'                  : self.options_axis.yaxis,
+                # 'xformatter'             : self.options_axis.xformatter,
+                # 'yformatter'             : self.options_axis.yformatter,
+                 'xlabel'                 : self.options_axis.xlabel,
+                 'ylabel'                 : self.options_axis.ylabel,
+                # 'padding'                : self.options_axis.padding,
+            }
+
+        @param.depends(
+               'x',
+               'y',
+               'y2',
+               'stacked',
+               'options_axis.width',
+               'options_axis.height',
+               'options_axis.shared_axes',
+               'options_axis.width',
+               'options_axis.height',
+               'options_axis.shared_axes',
+               'options_axis.grid',
+               'options_axis.legend',
+               'options_axis.rot',
+#               'options_axis.xlim',
+#               'options_axis.ylim',
+#               'options_axis.xticks',
+#               'options_axis.yticks',
+               'options_axis.colorbar',
+               'options_axis.invert',
+               'options_axis.title',
+               'options_axis.logx',
+               'options_axis.logy',
+               'options_axis.loglog',
+               'options_axis.xaxis',
+               'options_axis.yaxis',
+#               'options_axis.xformatter',
+#               'options_axis.yformatter',
+               'options_axis.xlabel',
+               'options_axis.ylabel',
+#               'options_axis.padding',
+             watch=True)
+        def view(self):
+            self.set_options()
+            return self.dataframe.hvplot.area(**self.plot_options)
+
+        def panel(self):
+            return pn.Row(self.param, self.view)
+
+
+class HeatmapPanel(param.Parameterized):
+
+    x = param.ObjectSelector(default="yellow",
+                             objects=["red", "yellow", "green"])
+    y = param.ObjectSelector(default="yellow",
+                             objects=["red", "yellow", "green"])
+    C = param.ObjectSelector(default="yellow",
+                             objects=["red", "yellow", "green"])
+    colorbar = param.Boolean(default=False, doc="Enables colorbar")
+    reduce_function = param.String(default='np.mean',
+                                   doc='Add reduce function')
+    gspec = pn.GridSpec(width=800, height=600, mode='override')
+    #######################
+    # Optional parameters #
+    #######################
+    options_axis = param.Parameter(precedence=3)
+
+    gif_pane = pn.pane.GIF(
+        'https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif')
+
+    def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+        if "options" not in params:
+            params["options_axis"] = AxisOptionsPanel(name="Options")
+        if dataframe is not None:
+            self.dataframe = dataframe
+        else:
+            self.dataframe = df
+        for k, v in objects.items():
+            try:
+                self.param[k].objects = v
+            except:
+                pass
+        for k, v in defaults.items():
+            try:
+                setattr(self, k, v)
+            except:
+                pass
+        super(HeatmapPanel, self).__init__(**params)
+
+        self.set_options()
+
+    def set_options(self):
+
+        self.plot_options = {
+            'x': self.x,
+            'y': self.y,
+            'C': self.C,
+            'colorbar': self.colorbar,
+            #'reduce_function': red_func,
+        }
+        self.axis_options = {
+            #######################
+            # Generic opts param. #
+            #######################
+            'width': self.options_axis.width,
+            'height': self.options_axis.height,
+            'shared_axes': self.options_axis.shared_axes,
+            'grid': self.options_axis.grid,
+            'legend': self.options_axis.legend,
+            'rot': self.options_axis.rot,
+            # 'xlim'                   : self.options_axis.xlim,
+            # 'ylim'                   : self.options_axis.ylim,
+            # 'xticks'                 : self.options_axis.xticks,
+            # 'yticks'                 : self.options_axis.yticks,
+            'colorbar': self.options_axis.colorbar,
+            'invert': self.options_axis.invert,
+            'title': self.options_axis.title,
+            'logx': self.options_axis.logx,
+            'logy': self.options_axis.logy,
+            'loglog': self.options_axis.loglog,
+            'xaxis': self.options_axis.xaxis,
+            'yaxis': self.options_axis.yaxis,
+            # 'xformatter'             : self.options_axis.xformatter,
+            # 'yformatter'             : self.options_axis.yformatter,
+            'xlabel': self.options_axis.xlabel,
+            'ylabel': self.options_axis.ylabel,
+            # 'padding'                : self.options_axis.padding,
+        }
+        red_func = eval(self.reduce_function)
+        if hasattr(red_func, '__call__'):
+            self.plot_options['reduce_function'] = red_func
+
+        self.gspec.width = self.options_axis.width
+        self.gspec.height = self.options_axis.height
+
+    @param.depends(
+        'options_axis.width',
+        'options_axis.height',
+        'options_axis.shared_axes',
+        'options_axis.grid',
+        'options_axis.legend',
+        'options_axis.rot',
+        #               'options_axis.xlim',
+        #               'options_axis.ylim',
+        #               'options_axis.xticks',
+        #               'options_axis.yticks',
+        'options_axis.colorbar',
+        'options_axis.invert',
+        'options_axis.title',
+        'options_axis.logx',
+        'options_axis.logy',
+        'options_axis.loglog',
+        'options_axis.xaxis',
+        'options_axis.yaxis',
+        #               'options_axis.xformatter',
+        #               'options_axis.yformatter',
+        'options_axis.xlabel',
+        'options_axis.ylabel',
+        #               'options_axis.padding',
+        watch=True)
+    def set_plot_options(self):
+        self.plot.opts(**self.axis_options)
+
+    @param.depends('x', 'y', 'C', 'colorbar', 'reduce_function', watch=True)
+    def view(self):
+        self.set_options()
+        self.gspec[0, 0] = self.gif_pane
+        self.plot = self.dataframe.hvplot_panel.heatmap(**self.plot_options)
+        self.gspec[0, 0] = self.plot
+        self.set_plot_options()
+        return self.gspec
+
+    def panel(self):
+        return pn.Row(self.param, self.view)
