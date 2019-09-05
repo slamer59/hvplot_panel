@@ -4,7 +4,7 @@ pipeline {
     stage('Install') {
       steps {
         sh '''#!/bin/bash -xe
-source /usr/local/anaconda3/bin/activate jupyterhub
+/usr/local/anaconda3/condabin/conda activate jupyterhub
 python setup.py install'''
       }
     }
