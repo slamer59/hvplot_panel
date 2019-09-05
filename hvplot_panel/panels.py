@@ -10,7 +10,7 @@ import param
 from datashader.colors import Sets1to3
 from holoviews.operation.datashader import datashade
 
-from axis_options import AxisOptionsPanel
+from .axis_options import AxisOptionsPanel
 
 
 class LinePanel(param.Parameterized):
