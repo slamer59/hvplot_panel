@@ -138,8 +138,8 @@ class LinePanel(param.Parameterized):
                 dataframe = df.copy()
                 if x_range is not None:
                     dataframe = dataframe[(dataframe[self.x] > x_range[0]) & (dataframe[self.x] < x_range[1])]
-                data_length = len(dataframe) * len(dataframe.columns)
-                step = 1 if data_length < self.max_step else data_length // self.max_step
+                data_size = len(dataframe) * len(dataframe.columns)
+                step = 1 if data_size < self.max_step else data_length // self.max_step
                 plot_df = dataframe[::step].hvplot(**self.plot_options)
                 if len(self.y) == 1:
                     return plot_df.options({'Curve': {'color': '#377eb8'}}) 
