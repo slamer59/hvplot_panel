@@ -3,7 +3,12 @@ pipeline {
   stages {
     stage('Install') {
       steps {
-        sh '''source /usr/local/anaconda3/bin/activate jupyterhub
+        sh '''
+
+#!/bin/bash
+
+
+source /usr/local/anaconda3/bin/activate jupyterhub
 
 
 
