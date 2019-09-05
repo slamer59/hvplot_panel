@@ -36,7 +36,7 @@ class LinePanel(param.Parameterized):
             :param objects: Dictionary to populate param widget
             :param defaults: Dictionary to set the default value of widget
             :param params: all other params
-            """
+         """
         if "options" not in params:
             params["options_axis"] = AxisOptionsPanel(name="Options", dataframe=dataframe, objects=objects,
                                                       defaults=defaults)
@@ -126,6 +126,10 @@ class LinePanel(param.Parameterized):
             return self.dataframe.hvplot.line(**self.plot_options)
 
     def view_datashade(self):
+        """
+        Use of datashade for performance and line for hover tool capabilities
+        :return: Panel of this combination
+        """
         # Select only sufficient data
         if self.x in self.y:
             self.y.remove(self.x)
@@ -155,9 +159,7 @@ class LinePanel(param.Parameterized):
             data_shade_plot *= datashade(lines_overlay)
         else:
             data_shade_plot *= datashade(lines_overlay, aggregator=ds.count_cat('Variable'))
-
-        self.data_shade_plot = pn.panel(data_shade_plot)
-        return pn.panel(self.data_shade_plot)
+        return pn.panel(data_shade_plot)
 
     def panel(self):
         return pn.Row(self.param, self.view)
@@ -176,6 +178,12 @@ class BoxPanel(param.Parameterized):
     options_axis = param.Parameter(precedence=3)
 
     def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+        """
+            :param dataframe: Pandas dataframe formatted (e.g. all types are well defined,...)
+            :param objects: Dictionary to populate param widget
+            :param defaults: Dictionary to set the default value of widget
+            :param params: all other params
+            """
         if "options" not in params:
             params["options_axis"] = AxisOptionsPanel(name="Options")
         self.dataframe = dataframe
@@ -277,6 +285,12 @@ class ScatterPanel(param.Parameterized):
     options_axis = param.Parameter(precedence=3)
 
     def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+        """
+            :param dataframe: Pandas dataframe formatted (e.g. all types are well defined,...)
+            :param objects: Dictionary to populate param widget
+            :param defaults: Dictionary to set the default value of widget
+            :param params: all other params
+            """
         if "options" not in params:
             params["options_axis"] = AxisOptionsPanel(name="Options")
         self.dataframe = dataframe
@@ -374,6 +388,12 @@ class HistPanel(param.Parameterized):
     options_axis = param.Parameter(precedence=3)
 
     def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+        """
+            :param dataframe: Pandas dataframe formatted (e.g. all types are well defined,...)
+            :param objects: Dictionary to populate param widget
+            :param defaults: Dictionary to set the default value of widget
+            :param params: all other params
+            """
         if "options" not in params:
             params["options_axis"] = AxisOptionsPanel(name="Options")
         self.dataframe = dataframe
@@ -474,6 +494,12 @@ class BarPanel(param.Parameterized):
     options_axis = param.Parameter(precedence=3)
 
     def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+        """
+            :param dataframe: Pandas dataframe formatted (e.g. all types are well defined,...)
+            :param objects: Dictionary to populate param widget
+            :param defaults: Dictionary to set the default value of widget
+            :param params: all other params
+            """
         if "options" not in params:
             params["options_axis"] = AxisOptionsPanel(name="Options")
         self.dataframe = dataframe
@@ -577,6 +603,12 @@ class AreaPanel(param.Parameterized):
     options_axis = param.Parameter(precedence=3)
 
     def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+        """
+            :param dataframe: Pandas dataframe formatted (e.g. all types are well defined,...)
+            :param objects: Dictionary to populate param widget
+            :param defaults: Dictionary to set the default value of widget
+            :param params: all other params
+            """
         if "options" not in params:
             params["options_axis"] = AxisOptionsPanel(name="Options")
         self.dataframe = dataframe
@@ -691,6 +723,12 @@ class HeatmapPanel(param.Parameterized):
         'https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif')
 
     def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+        """
+            :param dataframe: Pandas dataframe formatted (e.g. all types are well defined,...)
+            :param objects: Dictionary to populate param widget
+            :param defaults: Dictionary to set the default value of widget
+            :param params: all other params
+            """
         if "options" not in params:
             params["options_axis"] = AxisOptionsPanel(name="Options")
         self.dataframe = dataframe
