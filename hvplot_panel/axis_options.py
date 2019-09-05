@@ -5,7 +5,7 @@ class AxisOptionsPanel(param.Parameterized):
         height      = param.Integer(default=600, bounds=(200,1600))
         shared_axes = param.Boolean(True, doc="Share axes parameter")
         grid        = param.Boolean(default=False, doc="Whether to show a grid")
-        legend      = param.ObjectSelector(default="top", objects=(None, "top", "bottom", "left", "right"), doc="Whether to show a legend, or a legend position")
+        legend      = param.ObjectSelector(default="top", objects=("top_right", "top_left", "bottom_left", "bottom_right", "right", "left", "top", "bottom", None), doc="Whether to show a legend, or a legend position")
         rot         = param.Integer(default=45, bounds=(0,180), doc="Rotates the axis ticks along the x-axis by the specified number of degrees.")
 #        xlim        = param.Number(8.2,bounds=(7.5,10))
 #        ylim        = param.Number(8.2,bounds=(7.5,10))
