@@ -6,5 +6,4 @@
 __author__ = """Thomas PEDOT"""
 __email__ = 'thomas.pedot@gmail.com'
 __version__ = '0.1.0'
-
-# import panels 
+from . import panels
