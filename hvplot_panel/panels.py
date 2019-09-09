@@ -9,6 +9,7 @@ import panel as pn
 import param
 from datashader.colors import Sets1to3
 from holoviews.operation.datashader import datashade
+import hvplot.pandas
 
 from .axis_options import AxisOptionsPanel
 
@@ -160,8 +161,11 @@ class LinePanel(param.Parameterized):
             data_shade_plot *= datashade(lines_overlay, aggregator=ds.count_cat('Variable'))
         return pn.panel(data_shade_plot)
 
-    def panel(self):
-        return pn.Row(self.param, self.view)
+    def panel(self, cross_selector=True):
+        if cross_selector:
+            return pn.Row(self.view, pn.Param(self.param, widgets={'y': pn.widgets.CrossSelector}))
+        else:
+            return pn.Row(self.param, self.view)
 
 
 class BoxPanel(param.Parameterized):
@@ -282,7 +286,10 @@ class ScatterPanel(param.Parameterized):
     # Optional parameters #
     #######################
     options_axis = param.Parameter(precedence=3)
-
+    datashade = param.Boolean(default=True, doc='Enable datashade possibilities')
+    max_step = param.Integer(default=10000, bounds=(1, 100000))
+    color_key = hv.Cycle(Sets1to3)
+    
     def __init__(self, dataframe=None, objects=None, defaults=None, **params):
         """
             :param dataframe: Pandas dataframe formatted (e.g. all types are well defined,...)
@@ -365,11 +372,51 @@ class ScatterPanel(param.Parameterized):
         'options_axis.xlabel',
         'options_axis.ylabel',
         #               'options_axis.padding',
+         'datashade',
+        'max_step',
         watch=True)
     def view(self):
         self.set_options()
-        return self.dataframe.hvplot.scatter(**self.plot_options)
+        if self.datashade:
+            return self.view_datashade()
+        else:
+            return self.dataframe.hvplot.scatter(**self.plot_options)
 
+    def view_datashade(self):
+        """
+        Use of datashade for performance and line for hover tool capabilities
+        :return: Panel of this combination
+        """
+        # Select only sufficient data
+        if self.x in self.y:
+            self.y.remove(self.x)
+        if self.y == []:
+            return self.gif
+
+        df = self.dataframe[[self.x] + self.y].copy()
+        lines_overlay = df.hvplot.scatter(**self.plot_options).options({'Scatter': {'color': self.color_key}})
+
+        def hover_curve(x_range=[df.index.min(), df.index.max()]):  # , y_range):
+            # Compute
+            dataframe = df.copy()
+            if x_range is not None:
+                dataframe = dataframe[(dataframe.index > x_range[0]) & (dataframe.index < x_range[1])]
+            data_length = len(dataframe) * len(dataframe.columns)
+            step = 1 if data_length < self.max_step else data_length // self.max_step
+            plot_df = dataframe[::step].hvplot.scatter(**self.plot_options)
+            if len(self.y) == 1:
+                return plot_df.options({'Scatter': {'color': '#377eb8'}})
+            else:
+                return plot_df.options({'Scatter': {'color': self.color_key}})
+
+        # Define a RangeXY stream linked to the image
+        rangex = hv.streams.RangeX(source=lines_overlay)
+        data_shade_plot = hv.DynamicMap(hover_curve, streams=[rangex])
+        if len(self.y) == 1:
+            data_shade_plot *= datashade(lines_overlay)
+        else:
+            data_shade_plot *= datashade(lines_overlay, aggregator=ds.count_cat('Variable'))
+        return pn.panel(data_shade_plot)
     def panel(self):
         return pn.Row(self.param, self.view)
 
