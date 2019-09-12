@@ -9,10 +9,8 @@ import panel as pn
 import param
 from datashader.colors import Sets1to3
 from holoviews.operation.datashader import datashade
-import hvplot.pandas
 
 from .axis_options import AxisOptionsPanel
-
 
 class LinePanel(param.Parameterized):
     """
@@ -28,6 +26,7 @@ class LinePanel(param.Parameterized):
     datashade = param.Boolean(default=True, doc='Enable datashade possibilities')
     max_step = param.Integer(default=10000, bounds=(1, 100000))
     color_key = hv.Cycle(Sets1to3)
+    marker_key = hv.Cycle(['+', 'x', 'o', 'v', '^', '<', '>', 's', '*', 'd'])
     gif = pn.pane.GIF('https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif', aspect_ratio=1)
 
     def __init__(self, dataframe=None, objects=None, defaults=None, **params):
@@ -143,7 +142,7 @@ class LinePanel(param.Parameterized):
             # Compute
             dataframe = df.copy()
             if x_range is not None:
-                dataframe = dataframe[(dataframe.index > x_range[0]) & (dataframe.index < x_range[1])]
+                dataframe = dataframe[(dataframe[self.x] > x_range[0]) & (dataframe[self.x] < x_range[1])]
             data_length = len(dataframe) * len(dataframe.columns)
             step = 1 if data_length < self.max_step else data_length // self.max_step
             plot_df = dataframe[::step].hvplot(**self.plot_options)
@@ -161,7 +160,7 @@ class LinePanel(param.Parameterized):
             data_shade_plot *= datashade(lines_overlay, aggregator=ds.count_cat('Variable'))
         return pn.panel(data_shade_plot)
 
-    def panel(self, cross_selector=True):
+    def panel(self, cross_selector=False):
         if cross_selector:
             return pn.Row(self.view, pn.Param(self.param, widgets={'y': pn.widgets.CrossSelector}))
         else:
@@ -270,8 +269,11 @@ class BoxPanel(param.Parameterized):
         self.set_options()
         return self.dataframe.hvplot.box(**self.plot_options)
 
-    def panel(self):
-        return pn.Row(self.param, self.view)
+    def panel(self, cross_selector=True):
+        if cross_selector:
+            return pn.Row(self.view, pn.Param(self.param, widgets={'by': pn.widgets.CrossSelector}))
+        else:
+            return pn.Row(self.param, self.view)
 
 
 class ScatterPanel(param.Parameterized):
@@ -289,7 +291,7 @@ class ScatterPanel(param.Parameterized):
     datashade = param.Boolean(default=True, doc='Enable datashade possibilities')
     max_step = param.Integer(default=10000, bounds=(1, 100000))
     color_key = hv.Cycle(Sets1to3)
-    
+
     def __init__(self, dataframe=None, objects=None, defaults=None, **params):
         """
             :param dataframe: Pandas dataframe formatted (e.g. all types are well defined,...)
@@ -372,7 +374,7 @@ class ScatterPanel(param.Parameterized):
         'options_axis.xlabel',
         'options_axis.ylabel',
         #               'options_axis.padding',
-         'datashade',
+        'datashade',
         'max_step',
         watch=True)
     def view(self):
@@ -400,7 +402,7 @@ class ScatterPanel(param.Parameterized):
             # Compute
             dataframe = df.copy()
             if x_range is not None:
-                dataframe = dataframe[(dataframe.index > x_range[0]) & (dataframe.index < x_range[1])]
+                dataframe = dataframe[(dataframe[self.x] > x_range[0]) & (dataframe[self.x] < x_range[1])]
             data_length = len(dataframe) * len(dataframe.columns)
             step = 1 if data_length < self.max_step else data_length // self.max_step
             plot_df = dataframe[::step].hvplot.scatter(**self.plot_options)
@@ -417,8 +419,12 @@ class ScatterPanel(param.Parameterized):
         else:
             data_shade_plot *= datashade(lines_overlay, aggregator=ds.count_cat('Variable'))
         return pn.panel(data_shade_plot)
-    def panel(self):
-        return pn.Row(self.param, self.view)
+
+    def panel(self, cross_selector=False):
+        if cross_selector:
+            return pn.Row(self.view, pn.Param(self.param, widgets={'y': pn.widgets.CrossSelector}))
+        else:
+            return pn.Row(self.param, self.view)
 
 
 class HistPanel(param.Parameterized):
@@ -520,8 +526,11 @@ class HistPanel(param.Parameterized):
         self.set_options()
         return self.dataframe.hvplot.hist(**self.plot_options)
 
-    def panel(self):
-        return pn.Row(self.param, self.view)
+    def panel(self, cross_selector=False):
+        if cross_selector:
+            return pn.Row(self.view, pn.Param(self.param, widgets={'y': pn.widgets.CrossSelector}))
+        else:
+            return pn.Row(self.param, self.view)
 
 
 # %load ../hvplot_panel/bar_panel.py
@@ -630,8 +639,11 @@ class BarPanel(param.Parameterized):
         self.set_options()
         return self.dataframe.hvplot.bar(**self.plot_options)
 
-    def panel(self):
-        return pn.Row(self.param, self.view)
+    def panel(self, cross_selector=True):
+        if cross_selector:
+            return pn.Row(self.view, pn.Param(self.param, widgets={'y': pn.widgets.CrossSelector}))
+        else:
+            return pn.Row(self.param, self.view)
 
 
 class AreaPanel(param.Parameterized):
@@ -742,8 +754,11 @@ class AreaPanel(param.Parameterized):
         self.set_options()
         return self.dataframe.hvplot.area(**self.plot_options)
 
-    def panel(self):
-        return pn.Row(self.param, self.view)
+    def panel(self, cross_selector=False):
+        if cross_selector:
+            return pn.Row(self.view, pn.Param(self.param, widgets={'y': pn.widgets.CrossSelector}))
+        else:
+            return pn.Row(self.param, self.view)
 
 
 class HeatmapPanel(param.Parameterized):
@@ -875,3 +890,166 @@ class HeatmapPanel(param.Parameterized):
 
     def panel(self):
         return pn.Row(self.param, self.view)
+
+    
+markers = ['*', 'x', 'v', '^', '<', '>', 's', '+', 'd', 'o']
+
+class ScatterPanel(param.Parameterized):
+    """
+    Default panel for hvplot `scatter tool https://hvplot.pyviz.org/user_guide/Plotting.html#Scatter`
+    """
+    x = param.ObjectSelector(default="yellow", objects=["red", "yellow", "green"])
+    y = param.ListSelector(default=["yellow"], objects=["red", "yellow", "green"])
+
+    #######################
+    # Optional parameters #
+    #######################
+    options_axis = param.Parameter(precedence=3)
+    datashade = param.Boolean(default=True, doc='Enable datashade possibilities')
+    max_step = param.Integer(default=10000, bounds=(1, 100000))
+    color_key = hv.Cycle(Sets1to3)
+    marker_keys = hv.Cycle(markers)
+
+    def __init__(self, dataframe=None, objects=None, defaults=None, **params):
+        """
+            :param dataframe: Pandas dataframe formatted (e.g. all types are well defined,...)
+            :param objects: Dictionary to populate param widget
+            :param defaults: Dictionary to set the default value of widget
+            :param params: all other params
+            """
+        if "options" not in params:
+            params["options_axis"] = AxisOptionsPanel(name="Options")
+        self.dataframe = dataframe
+        for k, v in objects.items():
+            try:
+                self.param[k].objects = v
+            except:
+                pass
+        for k, v in defaults.items():
+            try:
+                setattr(self, k, v)
+            except:
+                pass
+        super(ScatterPanel, self).__init__(**params)
+
+        self.set_options()
+
+    def set_options(self):
+        self.plot_options = {
+            'x': self.x,
+            'y': self.y,
+            #######################
+            # Generic opts param. #
+            #######################
+            'width': self.options_axis.width,
+            'height': self.options_axis.height,
+            'shared_axes': self.options_axis.shared_axes,
+            'grid': self.options_axis.grid,
+            'legend': self.options_axis.legend,
+            'rot': self.options_axis.rot,
+            # 'xlim'                   : self.options_axis.xlim,
+            # 'ylim'                   : self.options_axis.ylim,
+            # 'xticks'                 : self.options_axis.xticks,
+            # 'yticks'                 : self.options_axis.yticks,
+            'colorbar': self.options_axis.colorbar,
+            'invert': self.options_axis.invert,
+            'title': self.options_axis.title,
+            'logx': self.options_axis.logx,
+            'logy': self.options_axis.logy,
+            'loglog': self.options_axis.loglog,
+            'xaxis': self.options_axis.xaxis,
+            'yaxis': self.options_axis.yaxis,
+            # 'xformatter'             : self.options_axis.xformatter,
+            # 'yformatter'             : self.options_axis.yformatter,
+            'xlabel': self.options_axis.xlabel,
+            'ylabel': self.options_axis.ylabel,
+            # 'padding'                : self.options_axis.padding,
+        }
+
+    @param.depends(
+        'x',
+        'y',
+        'options_axis.width',
+        'options_axis.height',
+        'options_axis.shared_axes',
+        'options_axis.grid',
+        'options_axis.legend',
+        'options_axis.rot',
+        #               'options_axis.xlim',
+        #               'options_axis.ylim',
+        #               'options_axis.xticks',
+        #               'options_axis.yticks',
+        'options_axis.colorbar',
+        'options_axis.invert',
+        'options_axis.title',
+        'options_axis.logx',
+        'options_axis.logy',
+        'options_axis.loglog',
+        'options_axis.xaxis',
+        'options_axis.yaxis',
+        #               'options_axis.xformatter',
+        #               'options_axis.yformatter',
+        'options_axis.xlabel',
+        'options_axis.ylabel',
+        #               'options_axis.padding',
+        'datashade',
+        'max_step',
+        'marker_keys',
+        watch=True)
+    def view(self):
+        self.set_options()
+        if self.datashade:
+            return self.view_datashade()
+        else:
+            return self.dataframe.hvplot.scatter(**self.plot_options)
+
+    def view_datashade(self):
+        """
+        Use of datashade for performance and line for hover tool capabilities
+        :return: Panel of this combination
+        """
+        # Select only sufficient data
+        if self.x in self.y:
+            self.y.remove(self.x)
+        if self.y == []:
+            return self.gif
+
+        df = self.dataframe[[self.x] + self.y].copy()
+        plot_opts = {
+                'Scatter': {'color': self.color_key, 'marker': self.marker_keys, 'size':10},
+                'Curve': {'color': self.color_key}
+            }
+        lines_overlay = df.hvplot.scatter(**self.plot_options).options(plot_opts)
+
+        def hover_curve(x_range=[df.index.min(), df.index.max()]):  # , y_range):
+            # Compute
+            dataframe = df.copy()
+            if x_range is not None:
+                dataframe = dataframe[(dataframe[self.x] > x_range[0]) & (dataframe[self.x] < x_range[1])]
+            data_length = len(dataframe) * len(dataframe.columns)
+            step = 1 if data_length < self.max_step else data_length // self.max_step
+            
+            plot_df = dataframe[::step].hvplot.line(**self.plot_options) * \
+                dataframe[::step*60].hvplot.scatter(**self.plot_options) 
+            plot_opts = {
+                'Scatter': {'color': 'k', 'marker': self.marker_keys, 'size':10},
+                'Curve': {'color': self.color_key}
+            }
+            if len(self.y) != 1:
+                plot_opts['Scatter']['color'] = self.color_key
+            return plot_df.options(plot_opts)
+
+        # Define a RangeXY stream linked to the image
+        rangex = hv.streams.RangeX(source=lines_overlay)
+        data_shade_plot = hv.DynamicMap(hover_curve, streams=[rangex])
+        if len(self.y) == 1:
+            data_shade_plot *= datashade(lines_overlay)
+        else:
+            data_shade_plot *= datashade(lines_overlay, aggregator=ds.count_cat('Variable'))
+        return pn.panel(data_shade_plot)
+
+    def panel(self, cross_selector=False):
+        if cross_selector:
+            return pn.Row(self.view, pn.Param(self.param, widgets={'y': pn.widgets.CrossSelector}))
+        else:
+            return pn.Row(self.param, self.view)
