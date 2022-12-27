@@ -22,7 +22,7 @@ pandas == 0.25.0
 param == 1.9.1
 
 # setup.py: 6
-setuptools == 41.0.1
+setuptools == 65.5.1
 
 request
 ZipFile
